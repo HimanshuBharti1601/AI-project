@@ -1,8 +1,7 @@
 import speech_recognition as sr
 from googletrans import Translator
-from docx import Document
 
-def recognize_speech(language_code='en-US'):
+def recognize_speech(language_code='en-US', timeout=60, phrase_time_limit=60):
     recognizer = sr.Recognizer()
     microphone = sr.Microphone()
 
@@ -10,7 +9,7 @@ def recognize_speech(language_code='en-US'):
         print("Adjusting for ambient noise... Please wait.")
         recognizer.adjust_for_ambient_noise(source)
         print("Listening...")
-        audio = recognizer.listen(source)
+        audio = recognizer.listen(source, timeout=timeout, phrase_time_limit=phrase_time_limit)
 
     try:
         print("Recognizing...")
@@ -26,13 +25,7 @@ def translate_text(text, target_language):
     translated = translator.translate(text, dest=target_language)
     return translated.text
 
-def save_to_docx(text, filename):
-    doc = Document()
-    doc.add_paragraph(text)
-    doc.save(filename)
-    print(f"Saved to {filename}")
-
-if __name__== "__main__":
+if __name__ == "__main__":
     language_options = {
         'hindi': 'hi-IN',    # Hindi
         'telugu': 'te-IN',   # Telugu
@@ -68,7 +61,6 @@ if __name__== "__main__":
                 target_language_code = translation_options[target_language_choice]
                 translated_text = translate_text(recognized_text, target_language_code)
                 print(f"Translated Text: {translated_text}")
-                save_to_docx(translated_text, f"translated_{target_language_choice}.docx")
             else:
                 print("Invalid choice. Please restart and choose a valid translation language.")
     else:
